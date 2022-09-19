@@ -1,0 +1,16 @@
+{
+  "name": "sqlite_testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.1"
+  }
+}
