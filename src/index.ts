@@ -13,62 +13,63 @@ async function connection() {
   });
 }
 
-const tableColumns =
-  "(ID INTEGER PRIMARY KEY AUTOINCREMENT, organizationId VARCHAR(100), data VARCHAR(10000))";
-
 // Create new table
-function createTable(tableName: string) {
-  connection().then((db) => {
-    db.exec(`CREATE TABLE ${tableName} ${tableColumns}`)
-      .then(() => {
-        console.log(`Table: ${tableName} created`);
-      })
-      .catch((err) => console.log(err.message));
-  });
+async function createTable(tableName: string) {
+  try {
+    const db = await connection();
+    await db.exec(
+      `CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, organizationId INTEGER NOT NULL)`
+    );
+    console.log(`Table: ${tableName} created`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // Add data
-function addData(tableName: string, organizationId: string, data: string) {
-  connection().then((db) => {
-    db.exec(
-      `INSERT INTO ${tableName} (organizationId, data) VALUES ('${organizationId}', '${data}')`
-    )
-      .then(() => {
-        console.log(`Data added into ${tableName}`);
-        db.close();
-      })
-      .catch((err) => console.log(err.message));
-  });
+async function addData(tableName: string, organizationId: number) {
+  try {
+    const db = await connection();
+    await db.exec(
+      `INSERT INTO ${tableName} (organizationId) VALUES ('${organizationId}')`
+    );
+    console.log(`Data added into ${tableName}`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // Get all data with table name and order (ASC, DESC)
-function getData(tableName: string, order: string) {
-  connection().then((db) => {
-    db.all(`SELECT * FROM ${tableName} ORDER BY ID ${order}`)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  });
+async function getData(tableName: string, order: string) {
+  try {
+    const db = await connection();
+    const data = await db.all(
+      `SELECT * FROM ${tableName} ORDER BY id ${order}`
+    );
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // Get data by organizationId
-function getOne(tableName: string, organizationId: string) {
-  connection().then((db) => {
-    db.get(
+async function getDataByOrganizationId(
+  tableName: string,
+  organizationId: number
+) {
+  try {
+    const db = await connection();
+    const data = await db.get(
       `SELECT * FROM ${tableName} WHERE organizationId = ?`,
       organizationId
-    )
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  });
+    );
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-const payload = {
-  name: "testingnewdataa",
-  age: 31,
-  status: "alive",
-};
-
-// createTable("test");
-// addData("test", "00000", JSON.stringify(payload));
-// getData("test", ORDER.DESC);
-// getOne("test", "00000");
+// createTable("testtable2");
+// addData("testtable", 202021);
+// getData("testtable", ORDER.ASC).then((data) => console.log(data));
+// getDataByOrganizationId("testtable", 202021).then((d) => console.log(d));
