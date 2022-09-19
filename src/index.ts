@@ -1,6 +1,11 @@
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
+enum ORDER {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 async function connection() {
   return await open({
     filename: "./mock.db",
@@ -36,10 +41,10 @@ function addData(tableName: string, organizationId: string, data: string) {
   });
 }
 
-// Get all data
-function getData(tableName: string, organizationId: string) {
+// Get all data with table name and order (ASC, DESC)
+function getData(tableName: string, order: string) {
   connection().then((db) => {
-    db.all(`SELECT * FROM ${tableName}`)
+    db.all(`SELECT * FROM ${tableName} ORDER BY ID ${order}`)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   });
@@ -65,5 +70,5 @@ const payload = {
 
 // createTable("test");
 // addData("test", "00000", JSON.stringify(payload));
-// getData("test", "asd");
+// getData("test", ORDER.DESC);
 // getOne("test", "00000");
